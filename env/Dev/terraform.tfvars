@@ -1,0 +1,17 @@
+rg_name  = "rg-todo-aks-dev"
+location = "Central India"
+vnet_name   = "vnet-todo-dev"
+vnet_cidr   = ["10.0.0.0/16"]
+subnet_name = "aks-subnet"
+subnet_cidr = ["10.0.0.0/24"]
+acr_name   = "tododevacr123"
+aks_name   = "todo-aks-dev"
+dns_prefix = "todoaks"
+law_name   = "todo-log-dev"
+sku    = "PerGB2018"
+acr_sku = "Basic"
+node_count = 1
+vm_size   = "Standard_DS2_v2"
+network_plugin = "azure"
+service_cidr   = "10.1.0.0/16"
+  dns_ip = "10.1.0.10"

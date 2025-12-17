@@ -1,0 +1,11 @@
+variable "aks_name" {}
+variable "location" {}
+variable "rg_name" {}
+variable "node_count" {}
+variable "vm_size" {}
+variable "subnet_id" {}
+variable "log_analytics_id" {}
+variable "dns_prefix" {}
+variable "network_plugin" {}
+variable "service_cidr" {}
+variable "dns_ip" {}
