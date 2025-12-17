@@ -1,5 +1,15 @@
-variable "acr_name" {}
-variable "location" {}
-variable "rg_name" {}
-variable "sku" {}
-variable "admin_enabled" {}
+variable "acr_name" {
+    type = string
+}
+variable "location" {
+    type = string
+}
+variable "rg_name" {
+    type = string
+}
+variable "sku" {
+    type = string
+}
+variable "admin_enabled" {
+    type = bool
+}
