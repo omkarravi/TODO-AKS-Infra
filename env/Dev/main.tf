@@ -47,6 +47,6 @@ module "aks" {
 
    network_plugin = var.network_plugin
    service_cidr   = var.service_cidr
-   dns_ip = var.dns_ip
+   dns_ip         = var.dns_ip
 }
 

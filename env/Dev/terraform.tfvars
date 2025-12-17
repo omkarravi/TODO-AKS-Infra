@@ -13,5 +13,5 @@ acr_sku = "Basic"
 node_count = 1
 vm_size   = "Standard_DS2_v2"
 network_plugin = "azure"
-service_cidr   = "10.1.0.0/16"
-  dns_ip = "10.1.0.10"
+service_cidr   = ["10.1.0.0/16"]
+  dns_ip = ["10.1.0.10"]
