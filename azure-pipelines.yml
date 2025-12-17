@@ -1,0 +1,130 @@
+trigger:
+ branches:
+   include:
+     - master
+
+pool:
+  name: my-pool
+
+stages:
+
+- stage: Plan
+  displayName: Infra code Scan & Plan
+  jobs:
+    - job: plan_job
+      displayName: Scan & Plan
+      steps:
+      - task: TerraformTask@5
+        displayName: terraform init
+        inputs:
+          provider: 'azurerm'
+          command: 'init'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+          backendServiceArm: 'todo-service'
+          backendAzureRmStorageAccountName: 'beltfstateprod'
+          backendAzureRmContainerName: 'tfstatecontainer'
+          backendAzureRmKey: 'dev.terraform.tfstate'
+
+      - task: TerraformTask@5
+        displayName: terraform validate
+        inputs:
+          provider: 'azurerm'
+          command: 'validate'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+
+      
+      - task: PowerShell@2
+        displayName: Run tflint
+        continueOnError: true
+        inputs:
+          targetType: 'inline'
+          script: 'tflint'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+
+      - task: PowerShell@2
+        displayName: Run tfsec
+        inputs:
+          targetType: 'inline'
+          script: 'tfsec .'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+
+      - task: TerraformTask@5
+        displayName: terraform plan
+        inputs:
+          provider: 'azurerm'
+          command: 'plan'
+          workingDirectory: '$(System.DefaultWorkingDirectory)/env/dev'
+          environmentServiceNameAzureRM: 'todo-service'
+
+- stage: Deploy_dev
+  displayName: Infra deploy to Dev
+  dependsOn: Plan
+  condition: succeeded()
+
+  jobs:
+  - deployment: deploy_to_Dev
+    displayName: Infra deploy to Dev
+    environment: Dev
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+          - task: TerraformTask@5
+            displayName: terraform init
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+              backendAzureRmStorageAccountName: 'beltfstateprod'
+              backendAzureRmContainerName: 'tfstatecontainer'
+              backendAzureRmKey: 'dev.terraform.tfstate'
+         
+          - task: TerraformTask@5
+            displayName: terraform apply (dev)
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+              environmentServiceNameAzureRM: 'todo-service'
+              commandOptions: '-auto-approve'
+
+- stage: Deploy_prod
+  displayName: Infra deploy to prod
+  dependsOn: Deploy_dev
+  condition: succeeded()
+
+  jobs:
+  - deployment: deploy_to_prod
+    displayName: Infra deploy to Prod
+    environment: Prod
+    strategy:
+     runOnce:
+       deploy:
+         steps:
+          - task: TerraformTask@5
+            displayName: terraform init
+            inputs:
+              provider: 'azurerm'
+              command: 'init'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+              backendAzureRmStorageAccountName: 'beltfstateprod'
+              backendAzureRmContainerName: 'tfstatecontainer'
+              backendAzureRmKey: 'Prod.terraform.tfstate'
+
+
+         
+          - task: TerraformTask@5
+            displayName: terraform apply (prod)
+            inputs:
+              provider: 'azurerm'
+              command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+              environmentServiceNameAzureRM: 'todo-service'
+              commandOptions: '-auto-approve'
+
+    
+              
+    
+
+  
+ 
