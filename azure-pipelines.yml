@@ -75,6 +75,7 @@ stages:
               provider: 'azurerm'
               command: 'init'
               workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+              backendServiceArm: 'todo-service'
               backendAzureRmStorageAccountName: 'beltfstateprod'
               backendAzureRmContainerName: 'tfstatecontainer'
               backendAzureRmKey: 'dev.terraform.tfstate'
@@ -84,6 +85,15 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'apply'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+              environmentServiceNameAzureRM: 'todo-service'
+              commandOptions: '-auto-approve'
+
+          - task: TerraformTask@5
+            displayName: terraform destroy
+            inputs:
+              provider: 'azurerm'
+              command: 'destroy'
               workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
               environmentServiceNameAzureRM: 'todo-service'
               commandOptions: '-auto-approve'
@@ -106,7 +116,8 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'init'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Prod'
+              backendServiceArm: 'todo-service'
               backendAzureRmStorageAccountName: 'beltfstateprod'
               backendAzureRmContainerName: 'tfstatecontainer'
               backendAzureRmKey: 'Prod.terraform.tfstate'
@@ -118,9 +129,18 @@ stages:
             inputs:
               provider: 'azurerm'
               command: 'apply'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Prod'
               environmentServiceNameAzureRM: 'todo-service'
               commandOptions: '-auto-approve'
+
+          - task: TerraformTask@5
+            displayName: terraform destroy
+            inputs:
+              provider: 'azurerm'
+              command: 'destroy'
+              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Prod'
+              commandOptions: '-auto-approve'
+              environmentServiceNameAzureRM: 'todo-service'
 
     
               
