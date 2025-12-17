@@ -35,7 +35,7 @@ stages:
       
       - task: PowerShell@2
         displayName: Run tflint
-        continueOnError: true
+        continueOnError: false
         inputs:
           targetType: 'inline'
           script: 'tflint'
@@ -89,14 +89,7 @@ stages:
               environmentServiceNameAzureRM: 'todo-service'
               commandOptions: '-auto-approve'
 
-          - task: TerraformTask@5
-            displayName: terraform destroy
-            inputs:
-              provider: 'azurerm'
-              command: 'destroy'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
-              environmentServiceNameAzureRM: 'todo-service'
-              commandOptions: '-auto-approve'
+         
 
 - stage: Deploy_prod
   displayName: Infra deploy to prod
@@ -133,15 +126,7 @@ stages:
               environmentServiceNameAzureRM: 'todo-service'
               commandOptions: '-auto-approve'
 
-          - task: TerraformTask@5
-            displayName: terraform destroy
-            inputs:
-              provider: 'azurerm'
-              command: 'destroy'
-              workingDirectory: '$(System.DefaultWorkingDirectory)/env/Prod'
-              commandOptions: '-auto-approve'
-              environmentServiceNameAzureRM: 'todo-service'
-
+         
     
               
     
