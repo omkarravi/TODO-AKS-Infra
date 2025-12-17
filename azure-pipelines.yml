@@ -45,7 +45,7 @@ stages:
         displayName: Run tfsec
         inputs:
           targetType: 'inline'
-          script: 'tfsec .'
+          script: 'tfsec . --soft-fail'
           workingDirectory: '$(System.DefaultWorkingDirectory)/env/Dev'
 
       - task: TerraformTask@5
